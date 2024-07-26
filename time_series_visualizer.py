@@ -26,7 +26,7 @@ for word in range(len(months_list)):
 
 
 ticks_list_label = ["0", "20000", "40000", "60000", "80000", "100000", "120000", "140000", "160000", "180000", "200000"]
-ticks_list_int = [int(s) for s in ticks_list]
+ticks_list_int = [int(s) for s in ticks_list_label]
 
 
 
@@ -56,13 +56,10 @@ def draw_bar_plot():
     df_bar["year"] = df_bar["date"].dt.year
     df_bar["month"] = df_bar["date"].dt.month
     
-    df_bar_pivot = df_bar.pivot_table(index=["year", "month"], values="value", aggfunc="mean")
-    df_bar_pivot = df_bar_pivot.reset_index()
-
-
     # Draw bar plot
-    fig, ax = plt.subplots(figsize=(9, 9))
-    ax = sns.barplot(data=df_bar_pivot, x="year", y="value", hue="month", palette="tab10")
+    df_bar_pivot_pd = df_bar.pivot_table(index="year", columns="month", values="value", aggfunc="mean")
+    
+    ax = df_bar_pivot_pd.plot.bar(figsize=(9, 9))
     plt.xlabel("Years", fontsize=14)
     plt.ylabel("Average Page Views", fontsize=14)
     plt.xticks(fontsize=13, rotation=90)
@@ -70,11 +67,13 @@ def draw_bar_plot():
     h, l = ax.get_legend_handles_labels()
     ax.legend(h, months_list, title="Months", loc="upper left", fontsize=14, title_fontsize=14)
 
+    fig = ax.get_figure()
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
     return fig
 
+draw_bar_plot()
 
 
 def draw_box_plot():
@@ -89,7 +88,8 @@ def draw_box_plot():
     plt.gcf().subplots_adjust(left = 0.05, bottom = 0.07, right = 0.95, top = 0.93, wspace = 0.15, hspace = 0)
     
     plt.subplot(1,2,1)
-    axes[0] = sns.boxplot(data=df_box, x="year", y="value", hue="year", palette="tab10", linewidth=1, width=0.80, fliersize=2, dodge=False).get_legend().remove()
+    #axes[0] = sns.boxplot(data=df_box, x="year", y="value", hue="year", palette="tab10", linewidth=1, width=0.80, fliersize=2, dodge=False).get_legend().remove() # OK with 0.10 seaborn version
+    axes[0] = sns.boxplot(data=df_box, x="year", y="value", hue="year", palette="tab10", linewidth=1, width=0.80, fliersize=2, dodge=False, legend=False)
     plt.title("Year-wise Box Plot (Trend)", fontsize=19)
     plt.xlabel("Year", fontsize=15)
     plt.ylabel("Page Views", fontsize=15)
@@ -97,7 +97,8 @@ def draw_box_plot():
     plt.yticks(fontsize=15, ticks=ticks_list_int, labels=ticks_list_label)
     
     plt.subplot(1,2,2)
-    axes[1] = sns.boxplot(data=df_box, x="month", y="value", hue="month", palette="rainbow", linewidth=1, width=0.75, fliersize=2, dodge=False, order=months_short_list).get_legend().remove()
+    #axes[1] = sns.boxplot(data=df_box, x="month", y="value", hue="month", palette="rainbow", linewidth=1, width=0.75, fliersize=2, dodge=False, order=months_short_list).get_legend().remove() # OK with 0.10 seaborn version
+    axes[1] = sns.boxplot(data=df_box, x="month", y="value", hue="month", palette="rainbow", linewidth=1, width=0.75, fliersize=2, dodge=False, order=months_short_list, legend=False)
     plt.title("Month-wise Box Plot (Seasonality)", fontsize=19)
     plt.xlabel("Month", fontsize=15)
     plt.ylabel("Page Views", fontsize=15)
